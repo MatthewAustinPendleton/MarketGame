@@ -2,12 +2,13 @@ from PIL import Image, ImageTk
 
 class Scene:
 
-    def __init__(self, name, description, image_path, contiguous_scenes):
+    def __init__(self, name, description, image_path, contiguous_scenes, activities=None):
 
         self.name = name
         self.description = description
         self.image_path = image_path
         self.contiguous_scenes = contiguous_scenes
+        self.activities = activities if activities else {}
 
         # Store resized image separately to prevent UI shifting
         self.resized_image = None

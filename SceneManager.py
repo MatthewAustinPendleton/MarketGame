@@ -20,7 +20,8 @@ class SceneManager:
                 name="Forest",
                 description="A dense forest with tall trees and a sense of mystery.",
                 image_path="forest.jpg",
-                contiguous_scenes=["Forest Pond"]
+                contiguous_scenes=["Forest Pond"],
+                activities={"forage": True}
             ),
             "Forest Pond": Scene(
                 name="Forest Pond",
