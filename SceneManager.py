@@ -10,6 +10,7 @@ class SceneManager:
         self.description_label = description_label
         self.scenes = self.load_scenes()
         self.current_scene = None
+        self.bg_image_id =  None
     
     def load_scenes(self):
 
@@ -33,18 +34,18 @@ class SceneManager:
     
     def load_scene(self, scene_name):
 
-        # Update the current scene
         self.current_scene = self.scenes[scene_name]
+        self.current_scene.load_scene_image(target_width=800, target_height=500)
 
-        # Load the background image
-        image = Image.open(self.current_scene.image_path)
-        image = image.resize((800, 500), Image.Resampling.LANCZOS)
-        self.bg_image = ImageTk.PhotoImage(image)
-        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.bg_image)
+        # Ensure the image is correctly displayed on the canvas
+        if self.current_scene.resized_image:
+            if self.bg_image_id:
+                self.canvas.delete(self.bg_image_id)
+            self.bg_image_id = self.canvas.create_image(0, 0, anchor=tk.NW, image=self.current_scene.resized_image)
 
         # Update the scene description
         self.description_label.config(text=self.current_scene.description)
-    
+
     def get_current_scene(self):
 
-        return self.current_scene
+        return self.current_scene    

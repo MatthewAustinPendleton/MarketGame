@@ -1,9 +1,10 @@
 import tkinter as tk
 
 class Inventory:
+
     def __init__(self, parent):
-        """Create an inventory UI inside the given parent container."""
-        self.frame = tk.Frame(parent, bg="gray", width=200, height=600)
+
+        self.frame = tk.Frame(parent, bg="gray")
         self.frame.pack(fill=tk.BOTH, expand=True)
         self.frame.grid_propagate(False)  # Prevent resizing issues
 
