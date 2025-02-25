@@ -46,3 +46,21 @@ class ButtonPanel:
     def enable_buttons(self):
         for button in self.buttons:
             button.configure(state='normal')
+    def setup_movement_buttons(self, scene_names, move_callback, cancel_callback):
+        """Setup movement buttons for scene navigation"""
+        self.clear_buttons()
+        for scene_name in scene_names:
+            self.add_button(
+                f"Go to {scene_name}", 
+                lambda s=scene_name: move_callback(s)
+            )
+        self.add_button("Cancel", cancel_callback)
+
+    def setup_scene_buttons(self, scene, move_callback, activity_callback):
+        """Setup buttons for the current scene"""
+        self.clear_buttons()
+        self.add_button("Move", move_callback)
+        for activity, enabled in scene.activities.items():
+            if enabled:
+                self.add_button(activity.capitalize(), 
+                    lambda a=activity: activity_callback(a))

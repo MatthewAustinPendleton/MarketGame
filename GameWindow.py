@@ -85,26 +85,28 @@ class GameWindow:
             self.event_manager.emit('skill_experience_gained', {'skill': self.forage_skill, 'amount': 10})
 
     def move_to_scene(self):
+        """Handle scene movement button click"""
         current_scene = self.scene_manager.get_current_scene()
         if current_scene and current_scene.contiguous_scenes:
-            # Clear existing buttons
-            self.button_panel.clear_buttons()
-            
-            # Add a button for each available scene
-            for scene_name in current_scene.contiguous_scenes:
-                self.button_panel.add_button(
-                    f"Go to {scene_name}", 
-                    lambda s=scene_name: self._perform_move(s)
-                )
-            
-            # Add a cancel button
-            self.button_panel.add_button("Cancel", self.load_buttons)
-
-    def _perform_move(self, scene_name):
+            self.button_panel.setup_movement_buttons(
+                current_scene.contiguous_scenes,
+                self.perform_move,  # Changed from _perform_move
+                self.load_buttons
+            )
+    def perform_move(self, scene_name):  # Changed from _perform_move
+        """Move to a new scene"""
         self.scene_manager.load_scene(scene_name)
         self.load_buttons()
 
     def load_buttons(self):
+        """Load scene-specific buttons"""
+        current_scene = self.scene_manager.get_current_scene()
+        self.button_panel.setup_scene_buttons(
+            current_scene,
+            self.move_to_scene,
+            self.activity_handler
+        )
+        # Remove duplicate button setup code that was here
         self.button_panel.clear_buttons()
         # Add Move button first
         self.button_panel.add_button("Move", self.move_to_scene)
