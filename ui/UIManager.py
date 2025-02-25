@@ -14,6 +14,7 @@ class UIManager:
         
         # Initialize UI components
         self._setup_components()
+
     def _setup_window(self):
         self.root.title("Economia")
         self.root.geometry("1000x700")
@@ -47,8 +48,9 @@ class UIManager:
         # Setup animation window
         self._setup_animation_window()
         
-        # Notebook setup continues...
-        
+        # Notebook setup
+        self._setup_notebook()
+
     def _setup_animation_window(self):
         """Setup the transparent animation overlay window"""
         self.animation_window = tk.Toplevel(self.root)
@@ -56,12 +58,15 @@ class UIManager:
         self.animation_window.attributes('-alpha', 0)
         self.animation_window.attributes('-topmost', True)
         self.animation_window.attributes('-transparentcolor', self.root.cget('bg'))
+
         def update_animation_window_position(event=None):
             x = self.root.winfo_x()
             y = self.root.winfo_y()
             self.animation_window.geometry(f"{self.root.winfo_width()}x{self.root.winfo_height()}+{x}+{y}")
+
         self.root.bind('<Configure>', update_animation_window_position)
         update_animation_window_position()
+
         self.animation_canvas = tk.Canvas(
             self.animation_window,
             width=1000,
@@ -71,6 +76,8 @@ class UIManager:
         )
         self.animation_canvas.pack(fill=tk.BOTH, expand=True)
         self.animation_window.attributes('-transparentcolor', self.root.cget('bg'))
+
+    def _setup_notebook(self):
         # Notebook (tabbed interface)
         self.notebook = ttk.Notebook(self.right_container)
         self.notebook.pack(fill=tk.BOTH, expand=True)
@@ -90,7 +97,6 @@ class UIManager:
                          font=("Arial", 14, "bold"), bg="gray", fg="white")
         header.pack(pady=10)
         
-        # Skill frame
         skill_frame = tk.Frame(self.skills_container, bg="gray")
         skill_frame.pack(fill=tk.X, padx=10, pady=5)
         
@@ -112,9 +118,20 @@ class UIManager:
             'exp_bar': exp_progress,
             'exp_label': exp_text
         }
+
+    def update_skill_display(self, skill):
+        """Update the skill display UI elements"""
+        if hasattr(skill, 'ui_elements'):
+            ui = skill.ui_elements
+            ui['level_label'].config(text=f"{skill.name} - Level {skill.level}")
+            exp_required = skill.get_exp_required()
+            ui['exp_bar']['value'] = (skill.experience / exp_required) * 100
+            ui['exp_label'].config(text=f"XP: {skill.experience}/{exp_required}")
+
     def switch_to_inventory(self):
         """Switch to the inventory tab"""
         self.notebook.select(0)
+
     def get_scene_canvas(self):
         """Get the canvas for scene rendering"""
         return self.canvas

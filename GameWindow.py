@@ -54,7 +54,7 @@ class GameWindow:
         self.load_buttons()
 
     def _handle_skill_updated(self, skill):
-        self._update_skill_display(skill)
+        self.ui_manager.update_skill_display(skill)
 
     def activity_handler(self, activity):
         if activity == "forage":
@@ -83,14 +83,6 @@ class GameWindow:
             self.event_manager.emit('switch_to_inventory')
             self.event_manager.emit('start_foraging_animation', {'item': item, 'button_panel': self.button_panel})
             self.event_manager.emit('skill_experience_gained', {'skill': self.forage_skill, 'amount': 10})
-
-    def _update_skill_display(self, skill):
-        if hasattr(skill, 'ui_elements'):
-            ui = skill.ui_elements
-            ui['level_label'].config(text=f"{skill.name} - Level {skill.level}")
-            exp_required = skill.get_exp_required()
-            ui['exp_bar']['value'] = (skill.experience / exp_required) * 100
-            ui['exp_label'].config(text=f"XP: {skill.experience}/{exp_required}")
 
     def move_to_scene(self):
         current_scene = self.scene_manager.get_current_scene()
@@ -128,13 +120,21 @@ class GameWindow:
         self.event_manager.subscribe('item_gathered', self._handle_item_gathered)
         self.event_manager.subscribe('scene_changed', self._handle_scene_changed)
         self.event_manager.subscribe('skill_updated', self._handle_skill_updated)
-        # Add new event handlers
-        self.event_manager.subscribe('switch_to_inventory', lambda: self.ui_manager.switch_to_inventory())
+        # Add new event handlers with proper data parameter handling
+        self.event_manager.subscribe('switch_to_inventory', lambda _: self.ui_manager.switch_to_inventory())
         self.event_manager.subscribe('start_foraging_animation', 
             lambda data: self.forage_animation.start_foraging(data['item'], data['button_panel']))
         self.event_manager.subscribe('skill_experience_gained', 
-            lambda data: data['skill'].add_experience(data['amount']))
-        # Fix: Add data parameter to lambda even though we don't use it
+            lambda data: self._handle_skill_experience_gained(data))
+        self.event_manager.subscribe('buttons_disabled', lambda _: self.button_panel.disable_buttons())
+    def _handle_skill_experience_gained(self, data):
+        """Handle skill experience gained event"""
+        skill = data['skill']
+        amount = data['amount']
+        skill.add_experience(amount)
+        # Trigger UI update after experience is added
+        self.event_manager.emit('skill_updated', skill)
+        # Remove duplicate subscription that was here
         self.event_manager.subscribe('buttons_disabled', lambda _: self.button_panel.disable_buttons())
 
     def _load_initial_state(self):
