@@ -117,16 +117,24 @@ class GameWindow:
 
     def _setup_event_handlers(self):
         """Setup all event subscriptions"""
-        self.event_manager.subscribe('item_gathered', self._handle_item_gathered)
+        # UI Events
+        self.event_manager.subscribe('switch_to_inventory', 
+            lambda _: self.ui_manager.switch_to_inventory())
+        self.event_manager.subscribe('buttons_disabled', 
+            lambda _: self.button_panel.disable_buttons())
+
+        # Scene Events
         self.event_manager.subscribe('scene_changed', self._handle_scene_changed)
+
+        # Skill Events
         self.event_manager.subscribe('skill_updated', self._handle_skill_updated)
-        # Add new event handlers with proper data parameter handling
-        self.event_manager.subscribe('switch_to_inventory', lambda _: self.ui_manager.switch_to_inventory())
-        self.event_manager.subscribe('start_foraging_animation', 
-            lambda data: self.forage_animation.start_foraging(data['item'], data['button_panel']))
         self.event_manager.subscribe('skill_experience_gained', 
             lambda data: self._handle_skill_experience_gained(data))
-        self.event_manager.subscribe('buttons_disabled', lambda _: self.button_panel.disable_buttons())
+
+        # Animation and Item Events
+        self.event_manager.subscribe('item_gathered', self._handle_item_gathered)
+        self.event_manager.subscribe('start_foraging_animation', 
+            lambda data: self.forage_animation.start_foraging(data['item'], data['button_panel']))
     def _handle_skill_experience_gained(self, data):
         """Handle skill experience gained event"""
         skill = data['skill']
