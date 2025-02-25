@@ -1,4 +1,5 @@
 from PIL import Image, ImageTk
+from Item import Item, LootTable
 
 class Scene:
 
@@ -12,6 +13,24 @@ class Scene:
 
         # Store resized image separately to prevent UI shifting
         self.resized_image = None
+
+        self.forage_loot_table = LootTable()
+
+        # Initialize default loot tables if this is Forest or Cavern Entrance
+        if name == "Forest":
+            apple = Item("Apple", "items/apple.png")
+            acorn = Item("Acorn", "items/acorn.png")
+            self.forage_loot_table.add_item(apple, 60)
+            self.forage_loot_table.add_item(acorn, 40)
+        elif name == "Cavern Entrance":
+            apple = Item("Apple", "items/apple.png")
+            rock = Item("Rock", "items/rock.png")
+            flint = Item("Flint", "items/flint.png")
+            twig = Item("Twig", "items/twig.png")
+            self.forage_loot_table.add_item(apple, 25)
+            self.forage_loot_table.add_item(rock, 30)
+            self.forage_loot_table.add_item(flint, 20)
+            self.forage_loot_table.add_item(twig, 25)
 
     def load_scene_image(self, target_width=500, target_height=400):
 

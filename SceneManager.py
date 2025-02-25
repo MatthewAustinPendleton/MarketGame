@@ -27,7 +27,14 @@ class SceneManager:
                 name="Forest Pond",
                 description="A serene pond surrounded by trees, with the sound of birds in the distance.",
                 image_path="forest-pond.jpg",
-                contiguous_scenes=["Forest"]
+                contiguous_scenes=["Forest","Cavern Entrance"]
+            ),
+            "Cavern Entrance": Scene(
+                name="Cavern Entrance",
+                description="A dark, mysterious opening in the forest. The entrance seems stable enough to enter.",
+                image_path="cavern-entrance.jpg",
+                contiguous_scenes=["Forest Pond"],
+                activities={"forage": True}
             )
         }
 
