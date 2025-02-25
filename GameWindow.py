@@ -106,17 +106,17 @@ class GameWindow:
             self.move_to_scene,
             self.activity_handler
         )
-        # Remove duplicate button setup code that was here
-        self.button_panel.clear_buttons()
-        # Add Move button first
-        self.button_panel.add_button("Move", self.move_to_scene)
-        # Then add activity buttons
-        current_scene = self.scene_manager.get_current_scene()
-        for activity, enabled in current_scene.activities.items():
-            if enabled:
-                self.button_panel.add_button(activity.capitalize(), 
-                    lambda a=activity: self.activity_handler(a))
 
+    def activity_handler(self, activity):
+        """Handle scene activities"""
+        activity_handlers = {
+            "forage": self._handle_forage_activity
+        }
+        
+        if activity in activity_handlers:
+            activity_handlers[activity]()
+        else:
+            print(f"No handler implemented for {activity}")
     def _setup_event_handlers(self):
         """Setup all event subscriptions"""
         # UI Events
