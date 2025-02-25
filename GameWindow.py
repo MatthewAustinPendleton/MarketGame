@@ -134,8 +134,6 @@ class GameWindow:
         skill.add_experience(amount)
         # Trigger UI update after experience is added
         self.event_manager.emit('skill_updated', skill)
-        # Remove duplicate subscription that was here
-        self.event_manager.subscribe('buttons_disabled', lambda _: self.button_panel.disable_buttons())
 
     def _load_initial_state(self):
         """Load initial game state"""
